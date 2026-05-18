@@ -27,6 +27,12 @@ body {
     text-shadow: 0 0 8px rgba(99, 102, 241, 0.6);
 }
 
+.leyla-text {
+    font-family: 'Dancing Script', cursive;
+    color: #ffb3c6; /* Pembe tonu */
+    text-shadow: 0 0 8px rgba(255, 0, 85, 0.6);
+}
+
 input {
     width: calc(100% - 20px);
     padding: 10px;
