@@ -63,16 +63,29 @@ function connectWebSocket(roomId, username, sendResponse) {
                     return;
                 }
                 
-                isRemoteUpdate = true;
                 if (videoElement) {
-                    videoElement.currentTime = data.time;
-                    if (data.state === 'play') {
-                        videoElement.play().catch(e => console.log('Autoplay prevented', e));
+                    const applySync = () => {
+                        isRemoteUpdate = true;
+                        try {
+                            if (data.time > 0) videoElement.currentTime = data.time;
+                            if (data.state === 'play') {
+                                videoElement.play().catch(e => console.log('Autoplay prevented', e));
+                            } else {
+                                videoElement.pause();
+                            }
+                        } catch (e) {
+                            console.error('SyncPlay Video Hatasi:', e);
+                        }
+                        setTimeout(() => { isRemoteUpdate = false; }, 500);
+                    };
+
+                    // Netflix DRM'inin çökmemesi için videonun yüklenmesini bekle
+                    if (videoElement.readyState >= 2) { // HAVE_CURRENT_DATA
+                        applySync();
                     } else {
-                        videoElement.pause();
+                        videoElement.addEventListener('canplay', applySync, { once: true });
                     }
                 }
-                setTimeout(() => { isRemoteUpdate = false; }, 500);
                 break;
                 
             case 'sync_url':
@@ -83,23 +96,39 @@ function connectWebSocket(roomId, username, sendResponse) {
                 break;
                 
             case 'play':
-                isRemoteUpdate = true;
-                videoElement.currentTime = data.time;
-                videoElement.play().catch(e => console.log('Autoplay prevented', e));
-                setTimeout(() => { isRemoteUpdate = false; }, 500);
+                if (videoElement) {
+                    const applyPlay = () => {
+                        isRemoteUpdate = true;
+                        try {
+                            videoElement.currentTime = data.time;
+                            videoElement.play().catch(e => console.log('Autoplay prevented', e));
+                        } catch (e) { console.error(e); }
+                        setTimeout(() => { isRemoteUpdate = false; }, 500);
+                    };
+                    if (videoElement.readyState >= 2) applyPlay();
+                    else videoElement.addEventListener('canplay', applyPlay, { once: true });
+                }
                 break;
                 
             case 'pause':
-                isRemoteUpdate = true;
-                videoElement.currentTime = data.time;
-                videoElement.pause();
-                setTimeout(() => { isRemoteUpdate = false; }, 500);
+                if (videoElement) {
+                    isRemoteUpdate = true;
+                    try {
+                        videoElement.currentTime = data.time;
+                        videoElement.pause();
+                    } catch (e) {}
+                    setTimeout(() => { isRemoteUpdate = false; }, 500);
+                }
                 break;
                 
             case 'seek':
-                isRemoteUpdate = true;
-                videoElement.currentTime = data.time;
-                setTimeout(() => { isRemoteUpdate = false; }, 500);
+                if (videoElement) {
+                    isRemoteUpdate = true;
+                    try {
+                        videoElement.currentTime = data.time;
+                    } catch (e) {}
+                    setTimeout(() => { isRemoteUpdate = false; }, 500);
+                }
                 break;
                 
             case 'action_notice':
