@@ -36,7 +36,7 @@ wss.on('connection', (ws) => {
                         ws.username = username;
 
                         if (!rooms[roomId]) {
-                            rooms[roomId] = { time: 0, state: 'pause', users: [] };
+                            rooms[roomId] = { time: 0, state: 'pause', users: [], url: null };
                         }
 
                         rooms[roomId].users.push({ id: ws, ws: ws, name: username });
@@ -45,7 +45,8 @@ wss.on('connection', (ws) => {
                         ws.send(JSON.stringify({
                             type: 'sync_state',
                             time: rooms[roomId].time,
-                            state: rooms[roomId].state
+                            state: rooms[roomId].state,
+                            url: rooms[roomId].url
                         }));
 
                         // Notify others
@@ -66,6 +67,19 @@ wss.on('connection', (ws) => {
                             text: data.text,
                             time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
                         });
+                    }
+                    break;
+
+                case 'url_change':
+                    if (ws.roomId && rooms[ws.roomId]) {
+                        rooms[ws.roomId].url = data.url;
+                        rooms[ws.roomId].time = 0; // Yeni videoda süreyi sıfırla
+                        
+                        broadcastToRoom(ws.roomId, { 
+                            type: 'sync_url', 
+                            url: data.url,
+                            message: `${ws.username} başka bir video açtı, oraya yönlendiriliyorsunuz...` 
+                        }, ws);
                     }
                     break;
 

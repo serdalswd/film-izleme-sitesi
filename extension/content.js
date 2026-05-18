@@ -2,6 +2,7 @@ let ws = null;
 let videoElement = null;
 let isRemoteUpdate = false;
 let checkInterval = null;
+let currentUrl = window.location.href;
 
 // Find Netflix Video element
 function findVideo() {
@@ -38,6 +39,12 @@ function connectWebSocket(roomId, username, sendResponse) {
             }, 1000);
         }
         
+        // Initial URL sync
+        ws.send(JSON.stringify({
+            type: 'url_change',
+            url: window.location.href
+        }));
+        
         showToast(`SyncPlay: ${roomId} odasına bağlandınız.`);
     };
 
@@ -47,14 +54,29 @@ function connectWebSocket(roomId, username, sendResponse) {
 
         switch (data.type) {
             case 'sync_state':
+                if (data.url && data.url.split('?')[0] !== window.location.href.split('?')[0]) {
+                    showToast('Odadaki videoya yönlendiriliyorsunuz...');
+                    setTimeout(() => { window.location.href = data.url; }, 2000);
+                    return;
+                }
+                
                 isRemoteUpdate = true;
-                videoElement.currentTime = data.time;
-                if (data.state === 'play') {
-                    videoElement.play().catch(e => console.log('Autoplay prevented', e));
-                } else {
-                    videoElement.pause();
+                if (videoElement) {
+                    videoElement.currentTime = data.time;
+                    if (data.state === 'play') {
+                        videoElement.play().catch(e => console.log('Autoplay prevented', e));
+                    } else {
+                        videoElement.pause();
+                    }
                 }
                 setTimeout(() => { isRemoteUpdate = false; }, 500);
+                break;
+                
+            case 'sync_url':
+                if (data.url && data.url.split('?')[0] !== window.location.href.split('?')[0]) {
+                    showToast(data.message);
+                    setTimeout(() => { window.location.href = data.url; }, 2500);
+                }
                 break;
                 
             case 'play':
@@ -161,3 +183,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendResponse({ status: 'disconnected' });
     }
 });
+
+// Watch for URL changes (Netflix is an SPA, so we need to poll)
+setInterval(() => {
+    if (window.location.href !== currentUrl) {
+        currentUrl = window.location.href;
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({
+                type: 'url_change',
+                url: currentUrl
+            }));
+        }
+    }
+}, 1000);
