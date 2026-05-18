@@ -11,10 +11,20 @@ body {
     text-align: center;
 }
 
-h2 {
-    color: #6366f1;
+.romantic-header {
     margin-top: 0;
     margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    font-size: 26px;
+}
+
+.serdal-text {
+    font-family: 'Dancing Script', cursive;
+    color: #818cf8; /* Mavi/Mor tonu */
+    text-shadow: 0 0 8px rgba(99, 102, 241, 0.6);
 }
 
 input {
