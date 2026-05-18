@@ -20,7 +20,7 @@ function connectWebSocket(roomId, username, sendResponse) {
         ws.close();
     }
 
-    ws = new WebSocket('ws://localhost:3000');
+    ws = new WebSocket('wss://film-izleme-sitesi.onrender.com');
 
     ws.onopen = () => {
         console.log('SyncPlay connected to server');
