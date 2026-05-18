@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>SyncPlay</title>
+    <link rel="stylesheet" href="popup.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h2>🍿 SyncPlay</h2>
+        
+        <div id="setup-panel">
+            <p>Netflix'te bir video açın ve odaya katılın.</p>
+            <input type="text" id="username" placeholder="Kullanıcı Adınız">
+            <input type="text" id="roomId" placeholder="Oda Adı">
+            <button id="joinBtn">Odaya Katıl</button>
+            <p id="errorMsg" class="error"></p>
+        </div>
+
+        <div id="active-panel" class="hidden">
+            <div class="status-badge">Bağlandı</div>
+            <p id="roomDisplay"></p>
+            <p id="userDisplay"></p>
+            <button id="leaveBtn">Ayrıl</button>
+        </div>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>

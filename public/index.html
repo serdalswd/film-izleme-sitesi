@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SyncPlay - Arkadaşlarla Film İzle</title>
+    <!-- Modern Font: Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Login Modal / Overlay -->
+    <div id="joinModal" class="modal-overlay">
+        <div class="modal-content glass-effect">
+            <div class="modal-header">
+                <i class="ph-fill ph-popcorn logo-icon"></i>
+                <h2>SyncPlay'e Hoş Geldin</h2>
+                <p>Arkadaşlarınla senkronize film izle</p>
+            </div>
+            <div class="input-group">
+                <i class="ph ph-user"></i>
+                <input type="text" id="usernameInput" placeholder="Kullanıcı Adın">
+            </div>
+            <div class="input-group">
+                <i class="ph ph-door"></i>
+                <input type="text" id="roomInput" placeholder="Oda Adı">
+            </div>
+            <button id="joinBtn" class="primary-btn">
+                <span>Odaya Katıl</span>
+                <i class="ph ph-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main App UI -->
+    <div id="appContainer" class="app-container hidden">
+        <!-- Sidebar Navigation (Optional/Decorative) -->
+        <nav class="sidebar glass-effect">
+            <div class="nav-brand">
+                <i class="ph-fill ph-popcorn text-accent"></i>
+            </div>
+            <div class="nav-items">
+                <button class="nav-btn active"><i class="ph ph-film-strip"></i></button>
+                <button class="nav-btn"><i class="ph ph-users"></i></button>
+                <button class="nav-btn"><i class="ph ph-gear"></i></button>
+            </div>
+            <div class="nav-bottom">
+                <button class="nav-btn" id="leaveRoomBtn"><i class="ph ph-sign-out text-danger"></i></button>
+            </div>
+        </nav>
+
+        <!-- Main Video Area -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="room-details">
+                    <h1 id="roomNameDisplay">Oda: -</h1>
+                    <span class="live-badge"><i class="ph-fill ph-circle"></i> CANLI</span>
+                </div>
+                <div class="user-profile">
+                    <div class="avatar" id="myAvatar"></div>
+                    <span id="myNameDisplay">Sen</span>
+                </div>
+            </header>
+
+            <div class="video-section glass-effect">
+                <div class="video-wrapper">
+                    <video id="videoPlayer" controls crossorigin="anonymous">
+                        <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                        Tarayıcınız video etiketini desteklemiyor.
+                    </video>
+                </div>
+                <div class="video-info">
+                    <h2>Big Buck Bunny (Örnek Video)</h2>
+                    <p>Odadaki herkesle senkronize izleniyor.</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar: Chat & Participants -->
+        <aside class="right-panel glass-effect">
+            <div class="panel-tabs">
+                <button class="tab-btn active" data-target="chat">Sohbet</button>
+                <button class="tab-btn" data-target="users">Kişiler (<span id="userCount">1</span>)</button>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="tab-content active" id="chatTab">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="system-message">Odaya katıldın.</div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chatInput" placeholder="Mesaj yaz...">
+                    <button id="sendChatBtn"><i class="ph-fill ph-paper-plane-right"></i></button>
+                </div>
+            </div>
+
+            <!-- Users Area -->
+            <div class="tab-content" id="usersTab">
+                <ul class="users-list" id="usersList">
+                    <!-- User items will be injected here -->
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

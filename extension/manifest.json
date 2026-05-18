@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "SyncPlay for Netflix",
+  "version": "1.0",
+  "description": "Arkadaşlarınızla senkronize Netflix izleyin",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://www.netflix.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "SyncPlay"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.netflix.com/watch/*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ]
+}
