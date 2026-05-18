@@ -67,7 +67,11 @@ function connectWebSocket(roomId, username, sendResponse) {
                     const applySync = () => {
                         isRemoteUpdate = true;
                         try {
-                            if (data.time > 0) videoElement.currentTime = data.time;
+                            // Netflix player çökmelerini engellemek için sadece fark 1.5 saniyeden büyükse seek yap
+                            if (data.time > 0 && Math.abs(videoElement.currentTime - data.time) > 1.5) {
+                                videoElement.currentTime = data.time;
+                            }
+                            
                             if (data.state === 'play') {
                                 videoElement.play().catch(e => console.log('Autoplay prevented', e));
                             } else {
@@ -100,7 +104,9 @@ function connectWebSocket(roomId, username, sendResponse) {
                     const applyPlay = () => {
                         isRemoteUpdate = true;
                         try {
-                            videoElement.currentTime = data.time;
+                            if (Math.abs(videoElement.currentTime - data.time) > 1.5) {
+                                videoElement.currentTime = data.time;
+                            }
                             videoElement.play().catch(e => console.log('Autoplay prevented', e));
                         } catch (e) { console.error(e); }
                         setTimeout(() => { isRemoteUpdate = false; }, 500);
@@ -114,7 +120,9 @@ function connectWebSocket(roomId, username, sendResponse) {
                 if (videoElement) {
                     isRemoteUpdate = true;
                     try {
-                        videoElement.currentTime = data.time;
+                        if (Math.abs(videoElement.currentTime - data.time) > 1.5) {
+                            videoElement.currentTime = data.time;
+                        }
                         videoElement.pause();
                     } catch (e) {}
                     setTimeout(() => { isRemoteUpdate = false; }, 500);
@@ -125,7 +133,9 @@ function connectWebSocket(roomId, username, sendResponse) {
                 if (videoElement) {
                     isRemoteUpdate = true;
                     try {
-                        videoElement.currentTime = data.time;
+                        if (Math.abs(videoElement.currentTime - data.time) > 1.5) {
+                            videoElement.currentTime = data.time;
+                        }
                     } catch (e) {}
                     setTimeout(() => { isRemoteUpdate = false; }, 500);
                 }
@@ -147,9 +157,15 @@ function connectWebSocket(roomId, username, sendResponse) {
 
     ws.onclose = () => {
         console.log('SyncPlay disconnected');
-        showToast('SyncPlay: Bağlantı koptu.');
-        const chatContainer = document.getElementById('syncplay-chat-container');
-        if (chatContainer) chatContainer.remove();
+        showToast('SyncPlay: Bağlantı koptu. Yeniden bağlanılıyor...');
+        
+        setTimeout(() => {
+            chrome.storage.local.get(['syncActive', 'roomId', 'username'], (result) => {
+                if (result.syncActive && result.roomId && result.username) {
+                    connectWebSocket(result.roomId, result.username);
+                }
+            });
+        }, 3000);
     };
 }
 
@@ -254,6 +270,17 @@ function setupChatUI(username) {
             position: relative;
         }
         
+        .serdal-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 28px;
+            background: linear-gradient(to right, #818cf8, #a78bfa, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: serdalShine 3s infinite;
+            letter-spacing: 1px;
+            margin-right: 2px;
+        }
+
         .leyla-text {
             font-family: 'Dancing Script', cursive;
             font-size: 28px;
@@ -262,7 +289,7 @@ function setupChatUI(username) {
             -webkit-text-fill-color: transparent;
             animation: leylaShine 3s infinite;
             letter-spacing: 1px;
-            margin-right: 2px;
+            margin-left: 2px;
         }
 
         .leyla-heart {
@@ -278,6 +305,12 @@ function setupChatUI(username) {
             animation: catShake 2.5s ease-in-out infinite;
             transform-origin: bottom center;
             margin-left: 5px;
+        }
+
+        @keyframes serdalShine {
+            0% { filter: drop-shadow(0 0 2px rgba(129,140,248,0.4)); }
+            50% { filter: drop-shadow(0 0 8px rgba(167,139,250,0.8)); }
+            100% { filter: drop-shadow(0 0 2px rgba(129,140,248,0.4)); }
         }
 
         @keyframes leylaShine {
@@ -420,8 +453,9 @@ function setupChatUI(username) {
     container.id = 'syncplay-chat-container';
     container.innerHTML = `
         <div id="syncplay-chat-header">
-            <span class="leyla-text">Leyla</span>
+            <span class="serdal-text">Serdal</span>
             <span class="leyla-heart">❤️</span>
+            <span class="leyla-text">Leyla</span>
             <span class="romantic-cat">😺🌹</span>
             <button class="minimize-btn" id="chat-min-btn">▼</button>
         </div>
