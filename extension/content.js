@@ -197,56 +197,77 @@ function setupChatUI(username) {
             right: 20px;
             bottom: 20px;
             width: 320px;
-            height: 400px;
-            background: rgba(15, 15, 20, 0.95);
+            height: 420px;
+            background: rgba(15, 12, 18, 0.95);
             border-radius: 16px;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255, 0, 85, 0.2);
             display: flex;
             flex-direction: column;
             z-index: 999999;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            box-shadow: 0 10px 40px rgba(255, 0, 85, 0.15);
             backdrop-filter: blur(10px);
             overflow: hidden;
             color: #fff;
         }
+        
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+        
         #syncplay-chat-header {
             padding: 15px;
-            background: linear-gradient(135deg, #111, #222);
+            background: linear-gradient(135deg, #1f041a, #4a0024); /* Romantik koyu bordo/mor gradyan */
             text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255, 0, 85, 0.3);
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            position: relative;
         }
         
         .leyla-text {
-            color: #ffb3c6;
-            text-shadow: 0 0 10px #ffb3c6, 0 0 20px #ff0055;
-            animation: leylaGlow 1.5s ease-in-out infinite alternate;
-            font-family: 'Comic Sans MS', cursive, sans-serif; /* Romantik/Şirin bir hava için */
+            font-family: 'Dancing Script', cursive;
+            font-size: 28px;
+            background: linear-gradient(to right, #ffb3c6, #ff0055, #ffb3c6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: leylaShine 3s infinite;
+            letter-spacing: 1px;
+            margin-right: 2px;
         }
 
         .leyla-heart {
+            font-size: 20px;
             color: #ff0055;
-            animation: leylaHeartbeat 1s infinite;
+            animation: leylaHeartbeat 1.2s infinite;
             display: inline-block;
         }
+        
+        .romantic-cat {
+            font-size: 22px;
+            display: inline-block;
+            animation: catShake 2.5s ease-in-out infinite;
+            transform-origin: bottom center;
+            margin-left: 5px;
+        }
 
-        @keyframes leylaGlow {
-            from { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff0055, 0 0 20px #ff0055; }
-            to { text-shadow: 0 0 10px #fff, 0 0 20px #ffb3c6, 0 0 30px #ffb3c6, 0 0 40px #ff0055; }
+        @keyframes leylaShine {
+            0% { filter: drop-shadow(0 0 2px rgba(255,0,85,0.4)); }
+            50% { filter: drop-shadow(0 0 8px rgba(255,179,198,0.8)); }
+            100% { filter: drop-shadow(0 0 2px rgba(255,0,85,0.4)); }
         }
 
         @keyframes leylaHeartbeat {
             0% { transform: scale(1); }
-            15% { transform: scale(1.3); }
+            15% { transform: scale(1.25); }
             30% { transform: scale(1); }
-            45% { transform: scale(1.3); }
+            45% { transform: scale(1.25); }
             60% { transform: scale(1); }
+        }
+        
+        @keyframes catShake {
+            0%, 100% { transform: rotate(-12deg); }
+            50% { transform: rotate(12deg); }
         }
 
         #syncplay-chat-messages {
@@ -255,97 +276,109 @@ function setupChatUI(username) {
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
+            background: url('data:image/svg+xml;utf8,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 3.22l-.61-.6a5.5 5.5 0 0 0-7.78 7.77L10 18.78l8.39-8.4a5.5 5.5 0 0 0-7.78-7.77l-.61.61z" fill="%23ff0055" fill-opacity="0.03"/></svg>');
         }
         
         /* Scrollbar styling */
-        #syncplay-chat-messages::-webkit-scrollbar { width: 6px; }
-        #syncplay-chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+        #syncplay-chat-messages::-webkit-scrollbar { width: 4px; }
+        #syncplay-chat-messages::-webkit-scrollbar-thumb { background: rgba(255,0,85,0.3); border-radius: 2px; }
 
         .chat-msg {
-            background: rgba(255,255,255,0.1);
-            padding: 8px 12px;
-            border-radius: 8px;
+            background: rgba(255,255,255,0.07);
+            padding: 10px 14px;
+            border-radius: 12px;
             font-size: 14px;
             line-height: 1.4;
             max-width: 85%;
             word-wrap: break-word;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
         
         .chat-msg.self {
-            background: rgba(229, 9, 20, 0.7); /* Netflix Kırmızısı */
+            background: linear-gradient(135deg, #d80044, #ff0055);
             align-self: flex-end;
-            border-bottom-right-radius: 2px;
+            border-bottom-right-radius: 3px;
         }
 
         .chat-msg.other {
             align-self: flex-start;
-            border-bottom-left-radius: 2px;
+            border-bottom-left-radius: 3px;
+            border-left: 2px solid #ff0055;
         }
 
         .msg-user {
             font-size: 11px;
-            color: rgba(255,255,255,0.6);
-            margin-bottom: 3px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 4px;
+            font-weight: 600;
         }
 
         #syncplay-chat-input-container {
             display: flex;
-            padding: 10px;
-            background: rgba(0,0,0,0.3);
-            border-top: 1px solid rgba(255,255,255,0.1);
+            padding: 12px;
+            background: rgba(0,0,0,0.4);
+            border-top: 1px solid rgba(255,0,85,0.1);
         }
 
         #syncplay-chat-input {
             flex-grow: 1;
-            background: rgba(255,255,255,0.1);
-            border: none;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,0,85,0.2);
             border-radius: 20px;
-            padding: 8px 15px;
+            padding: 10px 16px;
             color: white;
             outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        #syncplay-chat-input:focus {
+            border-color: rgba(255,0,85,0.6);
+            background: rgba(255,255,255,0.12);
         }
 
         #syncplay-chat-input::placeholder {
-            color: rgba(255,255,255,0.5);
+            color: rgba(255,255,255,0.4);
         }
 
         #syncplay-chat-send {
-            background: #e50914;
+            background: linear-gradient(135deg, #ff0055, #d80044);
             border: none;
             color: white;
             border-radius: 50%;
-            width: 34px;
-            height: 34px;
-            margin-left: 8px;
+            width: 38px;
+            height: 38px;
+            margin-left: 10px;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0 10px rgba(255,0,85,0.3);
         }
         
         #syncplay-chat-send:hover {
             transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(255,0,85,0.6);
         }
         
         .minimize-btn {
             position: absolute;
-            top: 15px;
+            top: 18px;
             right: 15px;
             background: none;
             border: none;
-            color: white;
+            color: rgba(255,255,255,0.6);
             cursor: pointer;
-            font-size: 16px;
-            opacity: 0.7;
+            font-size: 14px;
+            transition: color 0.2s;
         }
         .minimize-btn:hover {
-            opacity: 1;
+            color: white;
         }
         
         #syncplay-chat-container.minimized {
-            height: 55px;
+            height: 60px;
         }
         #syncplay-chat-container.minimized #syncplay-chat-messages,
         #syncplay-chat-container.minimized #syncplay-chat-input-container {
@@ -360,11 +393,12 @@ function setupChatUI(username) {
         <div id="syncplay-chat-header">
             <span class="leyla-text">Leyla</span>
             <span class="leyla-heart">❤️</span>
+            <span class="romantic-cat">😺🌹</span>
             <button class="minimize-btn" id="chat-min-btn">▼</button>
         </div>
         <div id="syncplay-chat-messages"></div>
         <div id="syncplay-chat-input-container">
-            <input type="text" id="syncplay-chat-input" placeholder="Mesaja başla..." autocomplete="off">
+            <input type="text" id="syncplay-chat-input" placeholder="Aşk dolu bir mesaj yaz..." autocomplete="off">
             <button id="syncplay-chat-send">➤</button>
         </div>
     `;
@@ -442,3 +476,13 @@ setInterval(() => {
         }
     }
 }, 1000);
+
+// Sayfa yenilendiğinde (veya yeni bölüme geçildiğinde) otomatik bağlan
+chrome.storage.local.get(['syncActive', 'roomId', 'username'], (result) => {
+    if (result.syncActive && result.roomId && result.username) {
+        console.log("SyncPlay: Otomatik olarak odaya yeniden bağlanılıyor...");
+        setTimeout(() => {
+            connectWebSocket(result.roomId, result.username);
+        }, 1500); // Netflix'in sayfayı yüklemesi için kısa bir bekleme süresi
+    }
+});
